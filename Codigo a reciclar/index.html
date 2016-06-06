@@ -1,0 +1,535 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta http-equiv='cache-control' content='no-cache'>
+	<meta http-equiv='expires' content='0'>
+	<meta http-equiv='pragma' content='no-cache'>	
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link rel="shortcut icon" href="http://www.xunta.gal/tema-portal-xunta/images/liferay.ico" />
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/js/dojo/dijit/themes/claro/claro.css" />
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/esri/css/esri.css" />
+    <link href="styles/ideg.css" rel="stylesheet" type="text/css" />
+    <link href="styles/font.css" rel="stylesheet" type="text/css" /> 
+	<link rel="stylesheet" id="dynamicStyleSheet" />
+	<script type="text/javascript" src="js/bowser.min.js"></script>
+	<script type="text/javascript" src="js/servers.js"></script>	
+    <script type="text/javascript">
+	
+		// CONFIGURACIÓN DE SOPORTE A NAVEGADORES
+		var IE_SUPPORT = 9;
+		var CHROME_SUPPORT = 28;
+		var FF_SUPPORT = 22;
+		var SAFARI_SUPPORT = 3;
+	
+	    //chequeamos la version del navegador
+		if (bowser.msie) {
+		    if (parseInt(bowser.version) < IE_SUPPORT )
+               location.href = "upgrade.htm";			
+		} else if (bowser.chrome) {
+		   if (parseInt(bowser.version) < CHROME_SUPPORT )
+               location.href = "upgrade.htm";
+		}else if (bowser.firefox) {
+		   if (parseInt(bowser.version) < FF_SUPPORT )
+               location.href = "upgrade.htm";
+		} else if (bowser.safari) {
+		   if (parseInt(bowser.version) < SAFARI_SUPPORT )
+               location.href = "upgrade.htm";
+		}
+	
+        var result = location.href.match(/[\?\&]locale=([^\&]+)/);
+        if (result && result[1] == "gl") {
+            result[1] = "fr";
+        }
+        var dojoConfig = {
+            locale: result && result[1] || "fr",
+            async: false,
+            parseOnLoad: true,
+            mblHideAddressBar: false,
+            packages: [
+                { name: "js", location: location.pathname.replace(/\/[^/]+$/, '') + '/js' }
+            ],
+            modulePaths: { appPath: location.pathname.replace(/\/[^/]+$/, '') }
+        };
+    </script>
+    <script type="text/javascript" src="http://mapas.xunta.es/api/library/3.7/3.7/init.js"></script>
+    <script type="text/javascript" src="js/baseMapGallery.js"></script>
+    <script type="text/javascript" src="js/modernizr-2.5.3.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/ArcGISUtils.js"></script>
+    <script type="text/javascript" src="js/PanelUtils.js"></script>
+    <script type="text/javascript" src="js/MetadataUtils.js"></script>
+    <script src="recursos/jquery-1.10.2.min.js"></script>
+	<script src="recursos/jquery-1.10.4.ui.js"></script>
+	<script type="text/javascript" src="js/busquedas.js"></script>
+	<script type="text/javascript" src="js/serviciosStore.js"></script>
+	<script type="text/javascript" src="js/addservicios.js"></script>
+
+
+    <script type="text/javascript" src="js/Constructor.js"></script>
+</head>
+<body class="claro">
+        
+    <!-- Contenedor principal -->
+    <div id="divMainContainer" style="width: 100%; height: 100%;" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline', gutters:false,liveSplitters:false " > 
+        <div id="divHeader" style="width: 100%;vertical-align:top" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top', splitter:false">
+               <table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse: collapse;"  >
+                    <tr style="vertical-align:top;">
+                          <td>  <div id="headerLink2" class="headerLinkI">INFORMACI&Oacute;N XEOGR&Aacute;FICA DE GALICIA</div></td>                                        
+                            <td id="tdSearch" class="tdHeaderGeocoder" >
+							    <div id="search_" style="padding-right:10px"></div>							
+                            </td>
+							<td id="tdBuscaXeral" class="tdHeader">
+                                <div class="button-action-ideg buscaxeral" id="imgBuscaXeral" data-icon="f" onclick="ShowBuscaXeral();" style="cursor: pointer"></div>
+                            </td>
+                            <td id="tdConsulta" class="tdHeader">
+                                <div class="button-action-ideg map" id="imgMedidas" data-icon="m" onclick="ShowMedidas();" style="cursor: pointer"></div>
+                            </td>
+							<td id="tdLayers" class="tdHeader">
+                                 <div id="imgLegend" class="button-action-ideg items" data-icon="i" onclick="ShowLeyenda();" style="cursor: pointer"></div>   
+                            </td> 
+                            <td id="tdwms" class="tdHeader">
+                                 <div class="button-action-ideg wms" id="imgNovaCapa" data-icon="O" onclick="ShowNovaCapa(); carga();" style="cursor: pointer"></div>
+                                
+                            </td>
+                            <td id="tdLegend" class="tdHeader">
+                                 <div class="button-action-ideg layers" id="imgListaCapas" data-icon="l" onclick="ShowListaCapas();" style="cursor: pointer"></div>
+                                
+                            </td>
+                            <td id="tdBaseMap" class="tdHeader">
+                                 <div id="imgSelectBasemap" class="button-action-ideg config" data-icon="c" onclick="ShowBaseMaps();" style="cursor: pointer" ></div>
+							</td> 
+                            <td id="tdMiMapa" class="tdHeader">
+                                 <div id="imgBookmarks" class="button-action-ideg book" data-icon="b" onclick="ShowBookMarks();" style="cursor: pointer"></div>
+                            	
+							</td>
+                            <td id="tdPrint" class="tdHeader">
+                                 <div id="imgPrinter" class="button-action-ideg printer" data-icon="p"  onclick="ShowPrinter();urlimpresion();" style="cursor: pointer" ></div>
+                            </td>
+                            <td id="socialMedia" class="tdHeader">
+                                  <div id="imgSocial" class="button-action-ideg share" data-icon="s" onclick="ShareLink(true);" style="cursor: pointer" ></div>
+                            </td>
+                            <td id="help" class="tdHeader"> 
+                                 <div id="imgHelp" class="button-action-ideg help" data-icon="h" style="cursor: pointer"  ></div>
+                            </td>
+                   
+				            <td class="tdHeader" style="padding-left:10px; padding-right:10px; padding-top:5px;" >
+                                 <a href="?locale=gl">galego</a>
+                                 <a href="?locale=es">castellano</a>
+				            </td>
+                    </tr>
+             </table> 
+        </div>
+	
+        <div id="map" style="width: 100%; height: 100%;" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'" >
+            <div id="HomeButton"></div>
+			<div id="mapFinder"><div id="search"></div></div>
+			<div id="buscar" style="cursor: pointer" class="buscar"></div> <!--data-icon="f"--> 
+			<div id="map_coordinates"></div>
+			<div id="dialog"></div>
+			<div id="escalanum"></div>					
+            <div id="divLeyenda" style="display:none"  >
+                <table class="tblHeader tblThematicHeader" style="width: 100%;">
+                    <tr style="height: 30px;">
+                            <td style="width:30px">
+                            <div class="button-title-ideg items" data-icon="i" />
+                        </td>
+                        <td class="tdHeader" style="padding-left: 8px;">
+                            <span id="menuLeyenda">Leyenda</span>
+                        </td>
+                        <td style="width: 10%;">
+                                <div class="button-title-ideg items" data-icon="x" onclick="ShowLeyenda();" style="cursor: pointer" />
+                        </td>
+                    </tr>
+                </table>
+		        <div id="leyendaDiv">
+					<div id="leyendaEsri"></div>
+					<div id="leyendaWMS"></div>
+				</div>
+	        </div>
+        </div>
+	
+
+        <div id="xuntadegalicia" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="width:100%;height:40px">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                         <a title="Xunta de Galicia" href="http://www.xunta.gal/portada"><img alt="Xunta de Galicia" src="images/logoXuntaPe.png"></a>
+                    </td>
+                    <td  style="width:100%">        
+                        <div id="legal"> 
+                            <p> © Xunta de Galicia. <span id="pie_1">Informaci&oacute;n mantida e publicada na internet pola Xunta de Galicia</span></p> 
+                                <ul>  
+                                    <li> <a id="pie_2_link" href="http://www.xunta.gal/oficina-de-rexistro-unico-e-informacion" title="Oficina de Rexistro e Información"><span id="pie_2">Oficina de Rexistro e Informaci&oacute;n</span></a> |</li>
+                                    <li> <a id="pie_3_link"title="Suxestións e queixas" href="http://www.xunta.gal/envio-de-consulta-ou-comentario"><span id="pie_3">Suxesti&oacute;ns e queixas</span></a> |</li>
+                                    <li> <a id="pie_4_link" href="http://www.xunta.gal/atendemolo" title="Atendémolo/a"><span id="pie_4">Atend&eacute;molo/a</span></a></li>
+                                </ul>
+                        </div>
+                    </td>
+                    <td>
+                         <div id="logoGalicia" align="right">  
+                            <a href="http://www.turgalicia.es/" title="Turismo de Galicia">
+                                <img src="images/galicia.png" alt="Turismo de Galicia"/>
+                            </a>  
+                        </div>  
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Contenedor del panel de pestañas para el mapinfo style="width:385px;height:150px;" -->
+    <div id="tabs" data-dojo-type="dijit/layout/TabContainer" doLayout="false"></div>
+
+	<div id="divBuscaXeralContainer" class="divBuscaXeralContainer hideContainerHeight">
+		<table class="tblHeader tblBuscaXeralHeader" style="width: 100%;">
+			 <tr style="height: 30px;">
+			   <td style="width:30px">
+				 <div class="button-title-ideg buscaxeral" data-icon="f" />
+			   </td>
+			   <td class="tdHeader" style="padding-left: 8px;">
+				 <span id="BuscaXeralMenu">Seleccione búsqueda</span>
+			   </td>
+			   <td style="width: 10%;">
+				 <div class="button-title-ideg buscaxeral" data-icon="x" onclick="HideBuscaXeral();" style="cursor: pointer" />
+			   </td>
+			 </tr>
+	   </table>
+		<!-- acordeon -->
+		<div id="acordeoBuscaXeral">
+				<table><tr><td>Territorial</td></tr></table>
+				<div style="height:auto">
+					<table>
+					<tr>
+						<td><label for="provincia1">Provincia:</label></td>
+						<td>
+							<div class="buscador">
+								<select id="provincia1" style="display:block;">
+								  <option value="-1">Seleccione Provincia</option>
+								  <option value="15">A Coruña</option>
+								  <option value="27">Lugo</option>
+								  <option value="32">Ourense</option>
+								  <option value="36">Pontevedra</option>
+								</select>
+								<div id="lupa_provi" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>
+					</tr>
+					<tr id="trConcellos" style="display:none">
+						<td><label for="SelectMuni">Concello:</label></td>
+						<td>
+							<div class="buscador">
+								<select id="SelectMuni" style="display:block;">
+								  <option value="-1">Seleccione Concello</option>
+								</select>
+								<div id="lupa_muni" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>
+					</tr>
+					<tr id="trParroquias" style="display:none;">
+						<td><label for="SelectParroquia">Parroquia:</label></td>
+						<td>
+							<div id="divParroquias" class="buscador">
+								<select id="SelectParroquia" style="display:none;">
+								  <option value="-1">Seleccione parroquia</option>
+								</select>
+								
+								<div id="lupa_parroquia" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>	
+					</tr>					
+					<tr id="trPoboacions" style="display:none">
+						<td><label for="SelectPobo">Poboación:</label></td>
+						<td>
+							<div id="divPoboacions" class="buscador">
+								<select id="SelectPobo" style="display:none;">
+								  <option value="-1">Seleccione poboación</option>
+								</select>
+								<div id="lupa_pobo" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>	
+					</tr>
+				</table>
+				</div>
+				<table><tr><td>Catastro</td></tr></table>
+				<div>
+				<table>
+				<tr><td class="tdHeaderGeocoder" >
+					<div class="buscador">
+					
+						<div id="milupa_catastro" class="esriGeocoderSearch esriGeocoderIcon" style="display:block" onclick="buscaCatastro('#buscador_input_catastro');"></div>
+						<input id="buscador_input_catastro" tabindex="0"  autocomplete="on" type="text" style="color:#bbbbbb" value="Ref. Catastral 14 caracteres">
+														
+						<div id="borratexto_catastro" class="esriGeocoderReset esriGeocoderIcon" title="Borrar busca" style="display:block"></div>
+					</div>
+				</td></tr>
+				</table>
+				</div>
+				<table><tr><td>Coordenadas</td></tr></table>
+				<div>
+				<table>
+				<tr><td class="tdHeaderGeocoder" >
+					<div class="buscador">
+					
+						<div id="milupa_xy" class="esriGeocoderSearch esriGeocoderIcon" style="display:block"></div>
+						<input id="buscador_input_xy" tabindex="0"  autocomplete="on" type="text" style="color:#bbbbbb" value="Coord.X, Coord.Y" title='513414.55, 4800131.41'>
+														
+						<div id="borratexto_xy" class="esriGeocoderReset esriGeocoderIcon" title="Borrar busca" style="display:block"></div>
+					</div>
+				</td></tr>
+				</table>
+				</div>
+		</div>
+			<!-- fin acordeon -->
+	</div> 
+	
+	<!-- Contenedor del panel NovaCapa -->
+	<div id="divNovaCapaContainer"  class="divNovaCapaContainer hideContainerHeight"  style="max-width:370px">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td>  
+                    <div id="divNovaCapaHolder">
+                        <div id="divNovaCapaContent" class="titleItems">
+							<table class="tblHeader tblNovaCapaHeader" style="width: 100%;">
+								 <tr style="height: 30px;">
+								   <td style="width:20px">
+									 <div class="button-title-ideg NovaCapa" data-icon="O" />
+								   </td>
+								   <td class="tdHeader" style="padding-left: 8px;">
+									 <span id="NovoServizoMenu">Engadir Novo Servizo</span>
+								   </td>
+								   <td style="width: 10%;">
+									 <div class="button-title-ideg NovaCapa" data-icon="x" onclick="ShowNovaCapa();" style="cursor: pointer" />
+								   </td>
+								 </tr>
+						   </table>
+								<div id="divNovaCapa" class="innerDiv" style="height:25px; display:block">
+									<div id="addservicios" class="buscador1" style="padding-right:5px; display:block">
+									<!-- aqui se le puede colocar un selector del tipo de servicio que vas a introducir
+									<div id="selector1" class="esriGeocoderMenuArrow esriGeocoderIcon" title="Seleccione tipo de busca" onclick="ShowMiGeocoder();"></div>-->
+											<div id="milupa1" class="esriGeocoderSearch esriGeocoderIcon" onclick="addservicio();"></div>
+											<input id="urlservicio" tabindex="0" value="URL WMS - Rest" autocomplete="on" type="text" style="color:#bbbbbb"><input id="labelservicio" tabindex="0" type="hidden" style="color:#bbbbbb">
+											<div id="borratexto1" class="esriGeocoderReset esriGeocoderIcon" title="Borrar URL" style=" display:block"></div>
+									</div>
+								</div>
+								<!-- div donde se va a meter las capas del servicio-->
+								<div><div id="divWMS"></div></div>
+
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>	
+			
+	<!-- Contenedor del panel CAPAS -->
+    <div id="divAddressContainer" class="divAddressContainer hideContainerHeight">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td>  
+                    <div id="divAddressHolder">
+                        <table class="tblHeader tblAdressHeader" style="width: 100%;" >
+                            <tr style="height: 30px;" valign="top">
+                                <td style="width:30px">
+                                    <div class="button-title-ideg layers" data-icon="l" />
+                                </td>
+                                <td class="tdHeader" align="left" valign="middle" style="padding-left: 8px;">
+                                    <span id="seleccionarCapasMenu">Seleccionar Capas</span>
+                                </td>
+                                <td style="width: 10%;" align="right">
+                                    <div class="button-title-ideg layers" data-icon="x" onclick="HideListaCapas();" style="cursor: pointer" />
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="divAddressList" class="divAddressList" dojoType="dijit.layout.ContentPane" style="height:100%;padding:0">
+                            <div id="divAddressScrollContainer" class="divAddressScrollContainer" align="left"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Contenedor del panel VISTAS -->
+    <div id="divLayerContainer" class="divLayerContainer hideContainerHeight">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td style="background-color:#CCC; border-width:0;padding:0px;">
+                    <div id="divLayerHolder">
+                        <table class="tblHeader tblVistasHeader" style="width: 100%;" >
+                            <tr style="height: 30px;" valign="top">
+                                <td style="width:30px">
+                                    <div class="button-title-ideg config" data-icon="c" />
+                                </td>
+                                <td class="tdHeader" align="left" valign="middle" style="padding-left: 8px;">
+                                    <span id="vistasMenu">Vistas</span>
+                                </td>
+                                <td style="width: 10%;" align="right">
+                                    <div class="button-title-ideg config" data-icon="x" onclick="ShowBaseMaps();" style="cursor: pointer" />
+                                </td>
+                            </tr>
+                         </table>
+                        <div class="innerDiv">
+                            <div id="layerList"></div> 
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Contenedor del panel COMPARTIR -->
+    <div id="divAppContainer" class="divAppContainer hideContainerHeight">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td>  
+                    <div id="divAppHolder">
+                        <div id="divAppContent" class="titleItems">
+                            <table class="tblHeader tblAppHeader" style="width: 100%;">
+                                <tr style="height: 30px;">
+                                        <td style="width:30px">
+                                        <div class="button-title-ideg share" data-icon="s" />
+                                    </td>
+                                    <td class="tdHeader" style="padding-left: 8px;">
+                                        <span id="compartirMapaMenu">Compartir</span>
+                                    </td>
+                                    <td style="width: 10%;">
+                                       <div class="button-title-ideg share" data-icon="x" onclick="HideShares();" style="cursor: pointer" />
+                                    </td>
+                                </tr>
+                            </table>
+	                        <div class="innerDiv">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            <table cellpadding="2" cellspacing="2">
+                                                <tr>
+                                                    <td style="width: 30px;" align="center" id="td1">
+                                                        <img title="Facebook" class="imgShare" id="img1" src="images/img_facebook.png"
+                                                            onclick="Share('facebook')" alt="Facebook"/>
+                                                    </td>
+                                                    <td style="width: 30px;" align="center" id="td2">
+                                                        <img title="Twitter" class="imgShare" id="img2" src="images/img_twitter.png"
+                                                            onclick="Share('twitter')" alt="Twiter"/>
+                                                    </td>
+                                                    <td style="width: 30px;" align="center" id="td3">
+                                                        <img title="Email" class="imgShare" alt="email" id="img3" src="images/img_email.png" onclick="Share('mail')" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+	                    </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Contenedor del panel MARCADORES -->
+    <div id="divBookmarksContainer" class="divBookmarksContainer hideContainerHeight" >
+       <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td>  
+                    <div id="divBookmarksHolder">
+                        <div class="divBookmarksContent"> 
+                            <table class="tblHeader tblBookmarksHeader" style="width: 100%;">
+                                <tr style="height: 30px;">
+                                     <td style="width:30px">
+                                        <div class="button-title-ideg book" data-icon="b" />
+                                    </td>
+                                    <td class="tdHeader" style="padding-left: 8px;">
+                                        <span id="marcadoresMenu">Marcadores</span>
+                                    </td>
+                                    <td style="width: 10%;">
+                                         <div class="button-title-ideg book" data-icon="x" onclick="HideBookmarks();" style="cursor: pointer" />
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="overflowBookmarks innerDiv roundedCorners">
+                                <div id="bookmarks"></div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Contenedor del panel MEDIDAS -->
+    <div id="divMedidasContainer"  class="divMedidasContainer hideContainerHeight">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td>  
+                    <div id="divMedidasHolder">
+                        <div id="divMedidasContent" class="titleItems">
+                            <table class="tblHeader tblMedidasHeader" style="width: 100%;">
+                                <tr style="height: 30px;">
+                                        <td style="width:30px">
+                                        <div class="button-title-ideg map" data-icon="m" />
+                                    </td>
+                                    <td class="tdHeader" style="padding-left: 8px;">
+                                        <span id="medidaMenu">Medidas</span>
+                                    </td>
+                                    <td style="width: 10%;">
+                                            <div class="button-title-ideg map" data-icon="x" onclick="ShowMedidas();" style="cursor: pointer" />
+                                    </td>
+                                </tr>
+                            </table>
+	                        <div class="innerDiv">
+                                <div id="measurementDiv"></div>
+                                <!-- <div id="coordinates"></div> -->
+                            </div>
+
+	                    </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Contenedor del panel IMPRIMIR -->
+    <div id="divPrinterContainer" class="divPrinterContainer hideContainerHeight">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="top"> 
+                <td>  
+                    <div id="divPrintHolder">
+                         <div id="divPrinterContent" class="titleItems">
+                              <table class="tblHeader tblPrinterHeader" style="width: 100%;">
+                                   <tr style="height: 30px;">
+                                       <td style="width:30px">
+                                             <div class="button-title-ideg print" data-icon="p" />
+                                        </td>
+                                        <td class="tdHeader" style="padding-left: 8px;">
+                                             <span id="printerMenu">Imprimir</span>                                    
+                                        </td>
+                                        <td style="width: 10%;">
+                                             <div class="button-title-ideg print" data-icon="x" onclick="HidePrinter();" style="cursor: pointer" />
+                                        </td>
+                                    </tr>
+                              </table>
+                              <div class="innerDiv"> 
+                                   <div id="print_button"></div>
+                              </div>
+                         </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Contenedor del panel de LOADING -->
+    <div id="divLoadingIndicator" class="divLoadingIndicator" style="display: block;">
+        <table style="width: 100%; height: 100%;">
+            <tr align="center" valign="middle">
+                <td>
+                    <img src="images/loader.gif" alt="Cargando..."/>
+                </td>
+            </tr>
+        </table>
+    </div>
+   <script type="text/javascript" src="js/botones.js"></script>	
+</body>
+</html>
