@@ -1,5 +1,116 @@
 <div>
-   <h3>SubWidget</h3>
-   <p>Search Subwidget</p>
-   <p>Holaaaaaaa</p>
+	<h3>SubWidget</h3>
+	<td id="tdBuscaXeral" class="tdHeader">
+	            <div class="button-action-ideg buscaxeral" id="imgBuscaXeral" data-icon="f" onclick="ShowBuscaXeral();" style="cursor: pointer"></div>
+	        </td>
+	        <td id="tdConsulta" class="tdHeader">
+	            <div class="button-action-ideg map" id="imgMedidas" data-icon="m" onclick="ShowMedidas();" style="cursor: pointer"></div>
+	        </td>
+
+
+
+
+
+	           <div id="tabs" data-dojo-type="dijit/layout/TabContainer" doLayout="false"></div>
+
+	<div id="divBuscaXeralContainer" class="divBuscaXeralContainer hideContainerHeight">
+		<table class="tblHeader tblBuscaXeralHeader" style="width: 100%;">
+			 <tr style="height: 30px;">
+			   <td style="width:30px">
+				 <div class="button-title-ideg buscaxeral" data-icon="f" />
+			   </td>
+			   <td class="tdHeader" style="padding-left: 8px;">
+				 <span id="BuscaXeralMenu">Seleccione búsqueda</span>
+			   </td>
+			   <td style="width: 10%;">
+				 <div class="button-title-ideg buscaxeral" data-icon="x" onclick="HideBuscaXeral();" style="cursor: pointer" />
+			   </td>
+			 </tr>
+	   </table>
+		<!-- acordeon -->
+		<div id="acordeoBuscaXeral">
+				<table><tr><td>Territorial</td></tr></table>
+				<div style="height:auto">
+					<table>
+					<tr>
+						<td><label for="provincia1">Provincia:</label></td>
+						<td>
+							<div class="buscador">
+								<select id="provincia1" style="display:block;">
+								  <option value="-1">Seleccione Provincia</option>
+								  <option value="15">A Coruña</option>
+								  <option value="27">Lugo</option>
+								  <option value="32">Ourense</option>
+								  <option value="36">Pontevedra</option>
+								</select>
+								<div id="lupa_provi" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>
+					</tr>
+					<tr id="trConcellos" style="display:none">
+						<td><label for="SelectMuni">Concello:</label></td>
+						<td>
+							<div class="buscador">
+								<select id="SelectMuni" style="display:block;">
+								  <option value="-1">Seleccione Concello</option>
+								</select>
+								<div id="lupa_muni" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>
+					</tr>
+					<tr id="trParroquias" style="display:none;">
+						<td><label for="SelectParroquia">Parroquia:</label></td>
+						<td>
+							<div id="divParroquias" class="buscador">
+								<select id="SelectParroquia" style="display:none;">
+								  <option value="-1">Seleccione parroquia</option>
+								</select>
+								
+								<div id="lupa_parroquia" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>	
+					</tr>					
+					<tr id="trPoboacions" style="display:none">
+						<td><label for="SelectPobo">Poboación:</label></td>
+						<td>
+							<div id="divPoboacions" class="buscador">
+								<select id="SelectPobo" style="display:none;">
+								  <option value="-1">Seleccione poboación</option>
+								</select>
+								<div id="lupa_pobo" class="esriGeocoderSearch esriGeocoderIcon" style="display:none;"></div>
+							</div>
+						</td>	
+					</tr>
+				</table>
+				</div>
+				<table><tr><td>Catastro</td></tr></table>
+				<div>
+				<table>
+				<tr><td class="tdHeaderGeocoder" >
+					<div class="buscador">
+					
+						<div id="milupa_catastro" class="esriGeocoderSearch esriGeocoderIcon" style="display:block" onclick="buscaCatastro('#buscador_input_catastro');"></div>
+						<input id="buscador_input_catastro" tabindex="0"  autocomplete="on" type="text" style="color:#bbbbbb" value="Ref. Catastral 14 caracteres">
+														
+						<div id="borratexto_catastro" class="esriGeocoderReset esriGeocoderIcon" title="Borrar busca" style="display:block"></div>
+					</div>
+				</td></tr>
+				</table>
+				</div>
+				<table><tr><td>Coordenadas</td></tr></table>
+				<div>
+				<table>
+				<tr><td class="tdHeaderGeocoder" >
+					<div class="buscador">
+					
+						<div id="milupa_xy" class="esriGeocoderSearch esriGeocoderIcon" style="display:block"></div>
+						<input id="buscador_input_xy" tabindex="0"  autocomplete="on" type="text" style="color:#bbbbbb" value="Coord.X, Coord.Y" title='513414.55, 4800131.41'>
+														
+						<div id="borratexto_xy" class="esriGeocoderReset esriGeocoderIcon" title="Borrar busca" style="display:block"></div>
+					</div>
+				</td></tr>
+				</table>
+				</div>
+		</div>
+	</div>
 </div>
