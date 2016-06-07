@@ -1,4 +1,10 @@
 var urlLimites = "http://ideg.xunta.es/servizos/rest/services/LimitesAdministrativos/LimitesAdministrativos/MapServer";
+var urlToponimia = "http://ideg.xunta.es/servizos/rest/services/Toponimia/toponimia_visor/MapServer";
+
+// ************************************
+// CONSTRUCTOR
+// ************************************
+
 define(['dojo/text!./templates/SubWidget.html', 'dojo/_base/declare', 'dijit/_WidgetBase', 'dijit/_TemplatedMixin', 'dojo/dom'], function (template, declare, _WidgetBase, _TemplatedMixin, dom) {
     return declare([_WidgetBase, _TemplatedMixin], {
         // description:
@@ -33,7 +39,7 @@ define(['dojo/text!./templates/SubWidget.html', 'dojo/_base/declare', 'dijit/_Wi
                 var c = [];
                 var a = esri.request({
 
-                    url: "http://mapas.xunta.es/visores/basico/json/concellos" + b + ".json",
+                    url: "/widgetSearchXunta/json/concellos" + b + ".json",
 
                     // url: "json/concellos" + b + ".json",
                     content: {
@@ -43,7 +49,6 @@ define(['dojo/text!./templates/SubWidget.html', 'dojo/_base/declare', 'dijit/_Wi
                     callbackParamName: "callback"
                 });
                 a.then(function (e) {
-                    debugger;
                     var g = e.features;
                     $.each(g, function (i, l) {
                         var m = l.attributes.codmuni;
@@ -59,6 +64,8 @@ define(['dojo/text!./templates/SubWidget.html', 'dojo/_base/declare', 'dijit/_Wi
                         j.add(h);
                     }
                     $("#trConcellos").show();
+                }, function (error) {
+                    console.log(error);
                 });
             }
             function cargaParroquias(d) {
@@ -271,6 +278,7 @@ define(['dojo/text!./templates/SubWidget.html', 'dojo/_base/declare', 'dijit/_Wi
                 idmun = $(this).val();
                 $("#trPoboacions").hide();
                 if (idmun != -1) {
+                    debugger;
                     $("#lupa_muni").show();
                     $("#lupa_muni").removeAttr("onclick").attr("onclick", 'consultaMuni(urlLimites + "/12/query",' + idmun + ")");
                     cargaParroquias(idmun);

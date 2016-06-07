@@ -1,4 +1,13 @@
 var urlLimites="http://ideg.xunta.es/servizos/rest/services/LimitesAdministrativos/LimitesAdministrativos/MapServer";
+var urlToponimia="http://ideg.xunta.es/servizos/rest/services/Toponimia/toponimia_visor/MapServer";
+
+// ************************************
+// CONSTRUCTOR
+// ************************************
+
+
+
+
 define([
   'dojo/text!./templates/SubWidget.html',
 
@@ -53,7 +62,7 @@ function cargaConcellos(b) {
     var c = [];
     var a = esri.request({
 
-        url: "http://mapas.xunta.es/visores/basico/json/concellos" + b + ".json",
+        url: "/widgetSearchXunta/json/concellos" + b + ".json",
 
         // url: "json/concellos" + b + ".json",
         content: {
@@ -63,7 +72,6 @@ function cargaConcellos(b) {
         callbackParamName: "callback"
     });
     a.then(function(e) {
-      debugger
         var g = e.features;
         $.each(g, function(i, l) {
             var m = l.attributes.codmuni;
@@ -79,7 +87,9 @@ function cargaConcellos(b) {
             j.add(h)
         }
         $("#trConcellos").show()
-    })
+    }, function(error){
+      console.log(error);
+    });
 }
 function cargaParroquias(d) {
     $("#SelectParroquia").children().remove();
@@ -292,6 +302,7 @@ $("#SelectMuni").change(function() {
     idmun = $(this).val();
     $("#trPoboacions").hide();
     if (idmun != -1) {
+debugger
         $("#lupa_muni").show();
         $("#lupa_muni").removeAttr("onclick").attr("onclick", 'consultaMuni(urlLimites + "/12/query",' + idmun + ")");
         cargaParroquias(idmun);
